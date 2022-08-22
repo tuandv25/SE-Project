@@ -1,0 +1,123 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar(255)
+  products Product[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  codePro     String
+  categoryId  Int
+  description String   @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  material    String   @db.VarChar(255)
+  color       String
+  price       Int
+  size_M      Int
+  size_S      Int
+  size_L      Int
+  size_XL     Int
+  img_1       String   @default("")
+  img_2       String   @default("")
+  publish     Boolean
+  newPro      Boolean
+  category    Category @relation(fields: [categoryId], references: [id])
+}
+
+model Accessory {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  codePro     String
+  description String   @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  material    String   @db.VarChar(255)
+  color       String
+  price       Int
+  count       Int
+  img_1       String   @default("")
+  img_2       String   @default("")
+  publish     Boolean
+  newPro      Boolean
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique @db.VarChar(255)
+  name        String   @db.VarChar(255)
+  phoneNumber String
+  address     String   @db.VarChar(255)
+  point       Int
+  admin       Boolean
+  staff       Boolean
+  birthday    DateTime @default("1890-01-01T00:00:00-00:00") @db.Date
+  orders      Order[]
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  namePro   String
+  price     Int
+  status    String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Sales {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  expireAt   DateTime @default("2022-08-08T00:00:00-00:00")
+  name       String
+  categoryId Int
+  disCount   Int
+  publish    Boolean
+}
+
+model Voucher {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expireAt  DateTime @default("2022-08-08T00:00:00-00:00")
+  name      String
+  disCount  Int
+  disCount2 Int
+  condition Int
+}
+
+model VoucherPremium {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  expireAt   DateTime @default("2022-08-08T00:00:00-00:00")
+  name       String
+  disCount   Int
+  disCount2  Int
+  categoryId Int
+  condition  Int
+}
+
+model VoucherBirthday {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  disCount  Int
+  condition Int
+}
